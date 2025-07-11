@@ -23,7 +23,7 @@ pub struct TaskId(u64);
 /// The possible states of a task.
 #[repr(u8)]
 #[derive(Debug, Clone, Copy, Eq, PartialEq)]
-pub(crate) enum TaskState {
+pub enum TaskState {
     /// Task is running on some CPU.
     Running = 1,
     /// Task is ready to run on some scheduler's ready queue.
@@ -38,7 +38,7 @@ pub(crate) enum TaskState {
 /// The inner task structure.
 pub struct TaskInner {
     id: TaskId,
-    name: String,
+    name: SpinNoIrq<String>,
     is_idle: bool,
     is_init: bool,
 
@@ -125,7 +125,7 @@ impl TaskInner {
         t.entry = Some(Box::into_raw(Box::new(entry)));
         t.ctx_mut().init(task_entry as usize, kstack.top(), tls);
         t.kstack = Some(kstack);
-        if t.name == "idle" {
+        if t.name() == "idle" {
             t.is_idle = true;
         }
         t
@@ -137,13 +137,18 @@ impl TaskInner {
     }
 
     /// Gets the name of the task.
-    pub fn name(&self) -> &str {
-        self.name.as_str()
+    pub fn name(&self) -> String {
+        self.name.lock().clone()
+    }
+
+    /// Set the name of the task.
+    pub fn set_name(&self, name: &str) {
+        *self.name.lock() = String::from(name);
     }
 
     /// Get a combined string of the task ID and name.
     pub fn id_name(&self) -> alloc::string::String {
-        alloc::format!("Task({}, {:?})", self.id.as_u64(), self.name)
+        alloc::format!("Task({}, {:?})", self.id.as_u64(), self.name())
     }
 
     /// Wait for the task to exit, and return the exit code.
@@ -226,7 +231,7 @@ impl TaskInner {
     fn new_common(id: TaskId, name: String) -> Self {
         Self {
             id,
-            name,
+            name: SpinNoIrq::new(name),
             is_idle: false,
             is_init: false,
             entry: None,
@@ -266,7 +271,7 @@ impl TaskInner {
         t.is_init = true;
         #[cfg(feature = "smp")]
         t.set_on_cpu(true);
-        if t.name == "idle" {
+        if t.name() == "idle" {
             t.is_idle = true;
         }
         t
@@ -276,8 +281,9 @@ impl TaskInner {
         Arc::new(AxTask::new(self))
     }
 
+    /// Returns the current state of the task.
     #[inline]
-    pub(crate) fn state(&self) -> TaskState {
+    pub fn state(&self) -> TaskState {
         self.state.load(Ordering::Acquire).into()
     }
 
@@ -400,6 +406,7 @@ impl TaskInner {
 
     /// Notify all tasks that join on this task.
     pub(crate) fn notify_exit(&self, exit_code: i32) {
+        self.set_state(TaskState::Exited);
         self.exit_code.store(exit_code, Ordering::Release);
         self.wait_for_exit.notify_all(false);
     }
@@ -498,16 +505,8 @@ impl CurrentTask {
         Self::try_get().expect("current task is uninitialized")
     }
 
-    /// Converts [`CurrentTask`] to [`AxTaskRef`].
-    pub fn as_task_ref(&self) -> &AxTaskRef {
-        &self.0
-    }
-
-    pub(crate) fn clone(&self) -> AxTaskRef {
-        self.0.deref().clone()
-    }
-
-    pub(crate) fn ptr_eq(&self, other: &AxTaskRef) -> bool {
+    /// Returns `true` if the current task is the same as `other`.
+    pub fn ptr_eq(&self, other: &AxTaskRef) -> bool {
         Arc::ptr_eq(&self.0, other)
     }
 
@@ -534,9 +533,10 @@ impl CurrentTask {
 }
 
 impl Deref for CurrentTask {
-    type Target = TaskInner;
+    type Target = AxTaskRef;
+
     fn deref(&self) -> &Self::Target {
-        self.0.deref()
+        &self.0
     }
 }
 

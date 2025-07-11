@@ -273,7 +273,7 @@ impl<G: BaseGuard> CurrentRunQueueRef<'_, G> {
     #[cfg(feature = "irq")]
     pub fn scheduler_timer_tick(&mut self) {
         let curr = &self.current_task;
-        if !curr.is_idle() && self.inner.scheduler.lock().task_tick(curr.as_task_ref()) {
+        if !curr.is_idle() && self.inner.scheduler.lock().task_tick(curr) {
             #[cfg(feature = "preempt")]
             curr.set_preempt_pending(true);
         }
@@ -288,7 +288,7 @@ impl<G: BaseGuard> CurrentRunQueueRef<'_, G> {
         assert!(curr.is_running());
 
         self.inner
-            .put_task_with_state(curr.clone(), TaskState::Running, false);
+            .put_task_with_state((*curr).clone(), TaskState::Running, false);
 
         self.inner.resched();
     }
@@ -343,7 +343,7 @@ impl<G: BaseGuard> CurrentRunQueueRef<'_, G> {
         );
         if can_preempt {
             self.inner
-                .put_task_with_state(curr.clone(), TaskState::Running, true);
+                .put_task_with_state((*curr).clone(), TaskState::Running, true);
             self.inner.resched();
         } else {
             curr.set_preempt_pending(true);
@@ -365,8 +365,6 @@ impl<G: BaseGuard> CurrentRunQueueRef<'_, G> {
             }
             axhal::power::system_off();
         } else {
-            curr.set_state(TaskState::Exited);
-
             // Notify the joiner task.
             curr.notify_exit(exit_code);
 
@@ -374,7 +372,9 @@ impl<G: BaseGuard> CurrentRunQueueRef<'_, G> {
             // which disabled IRQs and preemption.
             unsafe {
                 // Push current task to the `EXITED_TASKS` list, which will be consumed by the GC task.
-                EXITED_TASKS.current_ref_mut_raw().push_back(curr.clone());
+                EXITED_TASKS
+                    .current_ref_mut_raw()
+                    .push_back((*curr).clone());
                 // Wake up the GC task to drop the exited tasks.
                 WAIT_FOR_EXIT.current_ref_mut_raw().notify_one(false);
             }
@@ -407,7 +407,7 @@ impl<G: BaseGuard> CurrentRunQueueRef<'_, G> {
         curr.set_state(TaskState::Blocked);
         curr.set_in_wait_queue(true);
 
-        wq_guard.push_back(curr.clone());
+        wq_guard.push_back((*curr).clone());
         // Drop the lock of wait queue explictly.
         drop(wq_guard);
 
@@ -428,7 +428,7 @@ impl<G: BaseGuard> CurrentRunQueueRef<'_, G> {
 
         let now = axhal::time::wall_time();
         if now < deadline {
-            crate::timers::set_alarm_wakeup(deadline, curr.clone());
+            crate::timers::set_alarm_wakeup(deadline, (*curr).clone());
             curr.set_state(TaskState::Blocked);
             self.inner.resched();
         }
@@ -438,7 +438,7 @@ impl<G: BaseGuard> CurrentRunQueueRef<'_, G> {
         self.inner
             .scheduler
             .lock()
-            .set_priority(self.current_task.as_task_ref(), prio)
+            .set_priority(&self.current_task, prio)
     }
 }
 
@@ -554,12 +554,12 @@ impl AxRunQueue {
             // Store the weak pointer of **prev_task** in percpu variable `PREV_TASK`.
             #[cfg(feature = "smp")]
             {
-                *PREV_TASK.current_ref_mut_raw() = Arc::downgrade(prev_task.as_task_ref());
+                *PREV_TASK.current_ref_mut_raw() = Arc::downgrade(&prev_task);
             }
 
             // The strong reference count of `prev_task` will be decremented by 1,
             // but won't be dropped until `gc_entry()` is called.
-            assert!(Arc::strong_count(prev_task.as_task_ref()) > 1);
+            assert!(Arc::strong_count(&prev_task) > 1);
             assert!(Arc::strong_count(&next_task) >= 1);
 
             CurrentTask::set_current(prev_task, next_task);
