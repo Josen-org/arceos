@@ -83,10 +83,7 @@ pub mod power {
 
 /// Trap handling.
 pub mod trap {
-    #[cfg(feature = "uspace")]
-    pub use axcpu::trap::SYSCALL;
-    pub use axcpu::trap::{IRQ, PAGE_FAULT};
-    pub use axcpu::trap::{PageFaultFlags, register_trap_handler};
+    pub use axcpu::trap::{IRQ, PAGE_FAULT, PageFaultFlags, register_trap_handler};
 }
 
 /// CPU register states for context switching.
@@ -95,11 +92,17 @@ pub mod trap {
 ///
 /// - [`TaskContext`][axcpu::TaskContext]: The context of a task.
 /// - [`TrapFrame`][axcpu::TrapFrame]: The context of an interrupt or an exception.
-/// - [`UspaceContext`][axcpu::uspace::UspaceContext]: The context for user/kernel mode switching.
 pub mod context {
-    #[cfg(feature = "uspace")]
-    pub use axcpu::uspace::UspaceContext;
     pub use axcpu::{TaskContext, TrapFrame};
+}
+
+/// User mode support.
+#[cfg(feature = "uspace")]
+pub mod uspace {
+    pub use axcpu::{
+        trap::{ExceptionKind, ReturnReason},
+        uspace::{ExceptionInfo, UserContext},
+    };
 }
 
 pub use axcpu::asm;
