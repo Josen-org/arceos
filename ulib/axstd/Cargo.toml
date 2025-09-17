@@ -80,6 +80,8 @@ log-level-info = ["axfeat/log-level-info"]
 log-level-debug = ["axfeat/log-level-debug"]
 log-level-trace = ["axfeat/log-level-trace"]
 
+backtrace = ["axfeat/backtrace"]
+
 [dependencies]
 arceos_api.workspace = true
 axerrno.workspace = true

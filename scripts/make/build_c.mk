@@ -19,10 +19,14 @@ CFLAGS += -DAX_LOG_$(shell echo $(LOG) | tr 'a-z' 'A-Z')
 
 CFLAGS += -nostdinc -fno-builtin -ffreestanding -Wall
 CFLAGS += -I$(CURDIR)/$(inc_dir)
-LDFLAGS += -nostdlib -static -no-pie --gc-sections -znostart-stop-gc -T$(LD_SCRIPT)
+LDFLAGS += -nostdlib -static -no-pie --gc-sections -znostart-stop-gc -znorelro -T$(LD_SCRIPT)
 
 ifeq ($(MODE), release)
   CFLAGS += -O3
+endif
+
+ifeq ($(BACKTRACE), y)
+  CFLAGS += -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -g
 endif
 
 ifeq ($(ARCH), riscv64)
@@ -71,6 +75,9 @@ $(APP)/%.o: $(APP)/%.c $(ulib_hdr)
 $(OUT_ELF): $(libgcc) $(app-objs) $(c_lib) $(rust_lib)
 	@printf "    $(CYAN_C)Linking$(END_C) $(OUT_ELF)\n"
 	$(call run_cmd,$(LD),$(LDFLAGS) $^ -o $@)
+ifeq ($(BACKTRACE), y)
+	$(call run_cmd,./scripts/make/dwarf.sh,$(OUT_ELF) $(OBJCOPY))
+endif
 
 $(APP)/axbuild.mk: ;
 
