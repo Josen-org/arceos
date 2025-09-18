@@ -17,12 +17,13 @@ multitask = [
     "dep:axsched",
     "dep:cpumask",
     "dep:crate_interface",
+    "dep:foldhash",
     "dep:kernel_guard",
     "dep:kspin",
     "dep:lazyinit",
     "dep:memory_addr",
     "dep:percpu",
-    "dep:timer_list",
+    "dep:priority-queue",
 ]
 irq = []
 tls = ["axhal/tls"]
@@ -42,13 +43,14 @@ axsched = { version = "0.3", optional = true }
 cfg-if.workspace = true
 cpumask = { version = "0.1", optional = true }
 crate_interface = { workspace = true, optional = true }
+foldhash = { version = "0.1", default-features = false, optional = true }
 kernel_guard = { workspace = true, optional = true }
 kspin = { workspace = true, optional = true }
 lazyinit = { workspace = true, optional = true }
 log.workspace = true
 memory_addr = { workspace = true, optional = true }
 percpu = { workspace = true, optional = true }
-timer_list = { version = "0.1", optional = true }
+priority-queue = { version = "2.6", default-features = false, optional = true }
 
 [dev-dependencies]
 rand.workspace = true

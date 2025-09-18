@@ -860,14 +860,15 @@ dependencies = [
  "cfg-if",
  "cpumask",
  "crate_interface",
+ "foldhash",
  "kernel_guard",
  "kspin",
  "lazyinit",
  "log",
  "memory_addr",
  "percpu",
+ "priority-queue",
  "rand",
- "timer_list",
 ]
 
 [[package]]
@@ -1244,6 +1245,12 @@ checksum = "2f7719d63de27ac93e7cd2c8e0c03083f8b0ff7f842fdb6280b8cdcac21b4baf"
 dependencies = [
  "bitmaps",
 ]
+
+[[package]]
+name = "foldhash"
+version = "0.1.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d9c4f5dac5e15c24eb999c26181a6ca40b39fe946cbe4c263c7209467bc83af2"
 
 [[package]]
 name = "fxmac_rs"
@@ -1692,6 +1699,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "priority-queue"
+version = "2.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3e7f4ffd8645efad783fc2844ac842367aa2e912d484950192564d57dc039a3a"
+dependencies = [
+ "equivalent",
+ "indexmap",
+]
+
+[[package]]
 name = "proc-macro-error-attr2"
 version = "2.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2053,12 +2070,6 @@ dependencies = [
  "quote",
  "syn 2.0.106",
 ]
-
-[[package]]
-name = "timer_list"
-version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "158b52ace9609dd94f4af338f4828ff23b600d9160def8c001f2c73885521936"
 
 [[package]]
 name = "tock-registers"

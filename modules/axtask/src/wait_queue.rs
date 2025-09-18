@@ -65,7 +65,7 @@ impl WaitQueue {
         // Just mark task's current timer ticket ID as expired.
         #[cfg(feature = "irq")]
         if _from_timer_list {
-            curr.timer_ticket_expired();
+            crate::timers::clear_alarm_wakeup(&curr);
             // Note:
             //  this task is still not removed from timer list of target CPU,
             //  which may cause some redundant timer events because it still needs to
@@ -115,7 +115,7 @@ impl WaitQueue {
             curr.id_name(),
             deadline
         );
-        crate::timers::set_alarm_wakeup(deadline, curr.clone());
+        crate::timers::set_alarm_wakeup(deadline, &curr);
 
         rq.blocked_resched(self.queue.lock());
 
@@ -143,7 +143,7 @@ impl WaitQueue {
             curr.id_name(),
             deadline
         );
-        crate::timers::set_alarm_wakeup(deadline, curr.clone());
+        crate::timers::set_alarm_wakeup(deadline, &curr);
 
         let mut timeout = true;
         loop {

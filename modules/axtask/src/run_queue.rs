@@ -428,7 +428,7 @@ impl<G: BaseGuard> CurrentRunQueueRef<'_, G> {
 
         let now = axhal::time::wall_time();
         if now < deadline {
-            crate::timers::set_alarm_wakeup(deadline, (*curr).clone());
+            crate::timers::set_alarm_wakeup(deadline, curr);
             curr.set_state(TaskState::Blocked);
             self.inner.resched();
         }
