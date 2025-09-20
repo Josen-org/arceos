@@ -12,7 +12,6 @@ members = [
     "modules/axmm",
     "modules/axdma",
     "modules/axnet",
-    "modules/axns",
     "modules/axruntime",
     "modules/axsync",
     "modules/axtask",
@@ -60,7 +59,6 @@ axhal = { path = "modules/axhal" }
 axlog = { path = "modules/axlog" }
 axmm = { path = "modules/axmm" }
 axnet = { path = "modules/axnet" }
-axns = { path = "modules/axns" }
 axruntime = { path = "modules/axruntime" }
 axsync = { path = "modules/axsync" }
 axtask = { path = "modules/axtask" }
@@ -92,6 +90,7 @@ memory_addr = "0.4"
 memory_set = "0.4"
 percpu = "0.2"
 rand = "0.9"
+scope-local = "0.1"
 spin = "0.10"
 
 [patch.crates-io]
