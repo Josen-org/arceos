@@ -9,10 +9,13 @@ use kernel_guard::NoPreemptIrqSave;
 
 pub(crate) use crate::run_queue::{current_run_queue, select_run_queue};
 
+#[doc(cfg(all(feature = "multitask", feature = "task-ext")))]
+#[cfg(feature = "task-ext")]
+pub use crate::task::{AxTaskExt, TaskExt};
+
 #[doc(cfg(feature = "multitask"))]
 pub use crate::{
     task::{CurrentTask, TaskId, TaskInner, TaskState},
-    task_ext::{TaskExtMut, TaskExtRef},
     wait_queue::WaitQueue,
 };
 
