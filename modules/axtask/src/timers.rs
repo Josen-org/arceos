@@ -1,8 +1,10 @@
-use alloc::sync::Arc;
+use alloc::{boxed::Box, sync::Arc, vec::Vec};
 use core::{
     cmp::Reverse,
     hash::{Hash, Hasher},
 };
+use kernel_guard::NoPreemptIrqSave;
+use kspin::SpinRaw;
 
 use axhal::time::{TimeValue, wall_time};
 use foldhash::fast::FixedState;
@@ -10,6 +12,19 @@ use kernel_guard::NoOp;
 use priority_queue::PriorityQueue;
 
 use crate::{AxTaskRef, select_run_queue};
+
+type TimerCb = Box<dyn Fn(TimeValue) + Send + Sync>;
+
+static TIMER_CALLBACKS: SpinRaw<Vec<TimerCb>> = SpinRaw::new(Vec::new());
+
+/// Registers a callback function to be called on each timer tick.
+pub fn register_timer_callback<F>(callback: F)
+where
+    F: Fn(TimeValue) + Send + Sync + 'static,
+{
+    let _g = NoPreemptIrqSave::new();
+    TIMER_CALLBACKS.lock().push(Box::new(callback));
+}
 
 struct TaskPtr(AxTaskRef);
 
@@ -37,19 +52,22 @@ percpu_static! {
     TIMER_LIST: PriorityQueue<TaskPtr, Reverse<TimeValue>, FixedState> = PriorityQueue::with_hasher(FixedState::with_seed(0)),
 }
 
-pub fn set_alarm_wakeup(deadline: TimeValue, task: &AxTaskRef) {
+pub(crate) fn set_alarm_wakeup(deadline: TimeValue, task: &AxTaskRef) {
     TIMER_LIST.with_current(|list| {
         list.push(TaskPtr::new(task), Reverse(deadline));
     });
 }
 
-pub fn clear_alarm_wakeup(task: &AxTaskRef) {
+pub(crate) fn clear_alarm_wakeup(task: &AxTaskRef) {
     TIMER_LIST.with_current(|list| {
         list.remove(&TaskPtr::new(task));
     });
 }
 
-pub fn check_events() {
+pub(crate) fn check_events() {
+    for callback in TIMER_CALLBACKS.lock().iter() {
+        callback(wall_time());
+    }
     // Safety: IRQs are disabled at this time.
     let timer_list = unsafe { TIMER_LIST.current_ref_mut_raw() };
     while let Some((TaskPtr(task), _)) =
