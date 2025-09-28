@@ -13,7 +13,7 @@ repository = "https://github.com/arceos-org/arceos/tree/main/modules/axdriver"
 documentation = "https://arceos-org.github.io/arceos/axdriver/index.html"
 
 [features]
-dyn = []
+dyn = ["dep:rdrive", "dep:arm-gic-driver", "arm-gic-driver?/rdif"]
 bus-mmio = []
 bus-pci = ["dep:axdriver_pci", "dep:axhal", "dep:axconfig"]
 block = ["axdriver_block"]
@@ -62,3 +62,10 @@ crate_interface = { workspace = true }
 log = { workspace = true }
 ahci_driver = { git = "https://github.com/Starry-OS/ahci_driver.git", rev = "beaa9c8", optional = true }
 printf-compat = { git = "https://github.com/lights0123/printf-compat.git", rev = "5f5c9cc", default-features = false, optional = true }
+rdrive = { version = "0.16", optional = true }
+axerrno = "0.1"
+lazyinit = "0.2"
+memory_addr = "0.4"
+
+[target.'cfg(target_arch = "aarch64")'.dependencies]
+arm-gic-driver = { version = "0.15", optional = true }
