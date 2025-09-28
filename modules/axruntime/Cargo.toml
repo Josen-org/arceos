@@ -45,7 +45,7 @@ axtask = { workspace = true, optional = true }
 axfs-ng-vfs = { workspace = true, optional = true }
 axplat = { workspace = true }
 chrono = { workspace = true, optional = true }
-axerrno = "0.1"
+axerrno = { workspace = true }
 chrono = { workspace = true, optional = true }
 crate_interface = { workspace = true }
 indoc = "2"

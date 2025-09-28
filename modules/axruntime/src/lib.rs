@@ -332,7 +332,7 @@ fn init_tls() {
 }
 
 #[cfg(feature = "driver-dyn")]
-fn iomap(addr: axhal::mem::PhysAddr, size: usize) -> axerrno::AxResult<axhal::mem::VirtAddr> {
+fn iomap(addr: axhal::mem::PhysAddr, size: usize) -> axerrno::LinuxResult<axhal::mem::VirtAddr> {
     let virt = axhal::mem::phys_to_virt(addr);
     #[cfg(feature = "paging")]
     {

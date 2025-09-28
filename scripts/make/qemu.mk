@@ -46,7 +46,7 @@ qemu_args-loongarch64 := \
   -machine $(machine) \
   -kernel $(FINAL_IMG)
 
-qemu_args-y := -m $(MEM) -smp $(SMP) $(qemu_args-$(ARCH))
+qemu_args-y := -m $(MEM)  $(qemu_args-$(ARCH))
 
 qemu_args-$(BLK) += \
   -device virtio-blk-$(vdev-suffix),drive=disk0 \

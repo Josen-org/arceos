@@ -1,7 +1,7 @@
 use core::{error::Error, ops::Deref, ptr::NonNull};
 
 use alloc::{boxed::Box, format, string::ToString};
-use axerrno::{AxError, AxResult};
+use axerrno::{LinuxError, LinuxResult};
 use axhal::mem::{PhysAddr, VirtAddr, phys_to_virt};
 use lazyinit::LazyInit;
 use memory_addr::MemoryAddr;
@@ -13,7 +13,7 @@ mod intc;
 pub mod blk;
 
 /// A function type that maps a physical address to a virtual address. map flags should be read/write/device.
-pub type IoMapFunc = fn(PhysAddr, usize) -> AxResult<VirtAddr>;
+pub type IoMapFunc = fn(PhysAddr, usize) -> LinuxResult<VirtAddr>;
 
 static IO_MAP_FUNC: LazyInit<IoMapFunc> = LazyInit::new();
 
@@ -46,7 +46,7 @@ fn iomap(addr: PhysAddr, size: usize) -> Result<NonNull<u8>, Box<dyn Error>> {
 
     let virt = match iomap(start, size) {
         Ok(val) => val,
-        Err(AxError::AlreadyExists) => phys_to_virt(start),
+        Err(LinuxError::EEXIST) => phys_to_virt(start),
         Err(e) => {
             return Err(format!(
                 "Failed to map MMIO region: {e:?} (addr: {start:?}, size: {size:#x})"
