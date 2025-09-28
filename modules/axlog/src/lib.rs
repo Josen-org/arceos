@@ -17,11 +17,12 @@
 //! # Cargo features:
 //!
 //! - `std`: Use in the `std` environment. If it is enabled, you can use console
-//!   output without implementing the [`LogIf`] trait. This is disabled by default.
+//!   output without implementing the [`LogIf`] trait. This is disabled by
+//!   default.
 //! - `log-level-off`: Disable all logging. If it is enabled, all log macros
 //!   (e.g. [`info!`]) will be optimized out to a no-op in compilation time.
-//! - `log-level-error`: Set the maximum log level to `error`. Any macro
-//!   with a level lower than [`error!`] (e.g, [`warn!`], [`info!`], ...) will be
+//! - `log-level-error`: Set the maximum log level to `error`. Any macro with a
+//!   level lower than [`error!`] (e.g, [`warn!`], [`info!`], ...) will be
 //!   optimized out to a no-op.
 //! - `log-level-warn`, `log-level-info`, `log-level-debug`, `log-level-trace`:
 //!   Similar to `log-level-error`.
@@ -50,20 +51,20 @@
 
 extern crate log;
 
-use core::fmt::{self, Write};
-use core::str::FromStr;
-
-use log::{Level, LevelFilter, Log, Metadata, Record};
+use core::{
+    fmt::{self, Write},
+    str::FromStr,
+};
 
 #[cfg(not(feature = "std"))]
 use crate_interface::call_interface;
-
+use log::{Level, LevelFilter, Log, Metadata, Record};
 pub use log::{debug, error, info, trace, warn};
 
 /// Prints to the console.
 ///
-/// Equivalent to the [`ax_println!`] macro except that a newline is not printed at
-/// the end of the message.
+/// Equivalent to the [`ax_println!`] macro except that a newline is not printed
+/// at the end of the message.
 #[macro_export]
 macro_rules! ax_print {
     ($($arg:tt)*) => {
@@ -89,22 +90,22 @@ macro_rules! with_color {
 #[repr(u8)]
 #[allow(dead_code)]
 enum ColorCode {
-    Black = 30,
-    Red = 31,
-    Green = 32,
-    Yellow = 33,
-    Blue = 34,
-    Magenta = 35,
-    Cyan = 36,
-    White = 37,
-    BrightBlack = 90,
-    BrightRed = 91,
-    BrightGreen = 92,
-    BrightYellow = 93,
-    BrightBlue = 94,
+    Black         = 30,
+    Red           = 31,
+    Green         = 32,
+    Yellow        = 33,
+    Blue          = 34,
+    Magenta       = 35,
+    Cyan          = 36,
+    White         = 37,
+    BrightBlack   = 90,
+    BrightRed     = 91,
+    BrightGreen   = 92,
+    BrightYellow  = 93,
+    BrightBlue    = 94,
     BrightMagenta = 95,
-    BrightCyan = 96,
-    BrightWhite = 97,
+    BrightCyan    = 96,
+    BrightWhite   = 97,
 }
 
 /// Extern interfaces that must be implemented in other crates.

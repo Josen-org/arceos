@@ -19,10 +19,12 @@
 //!     - `multitask`: Enable multi-threading support.
 //!     - `sched-fifo`: Use the FIFO cooperative scheduler.
 //!     - `sched-rr`: Use the Round-robin preemptive scheduler.
-//!     - `sched-cfs`: Use the Completely Fair Scheduler (CFS) preemptive scheduler.
+//!     - `sched-cfs`: Use the Completely Fair Scheduler (CFS) preemptive
+//!       scheduler.
 //! - Upperlayer stacks (fs, net, display)
 //!     - `fs`: Enable file system support.
-//!     - `myfs`: Allow users to define their custom filesystems to override the default.
+//!     - `myfs`: Allow users to define their custom filesystems to override the
+//!       default.
 //!     - `net`: Enable networking support.
 //!     - `display`: Enable graphics support.
 //! - Device drivers
@@ -30,11 +32,13 @@
 //!     - `bus-pci`: Use PCI bus to probe all PCI devices.
 //!     - `driver-ramdisk`: Use the RAM disk to emulate the block device.
 //!     - `driver-ixgbe`: Enable the Intel 82599 10Gbit NIC driver.
-//!     - `driver-bcm2835-sdhci`: Enable the BCM2835 SDHCI driver (Raspberry Pi SD card).
+//!     - `driver-bcm2835-sdhci`: Enable the BCM2835 SDHCI driver (Raspberry Pi
+//!       SD card).
 //! - Logging
 //!     - `log-level-off`: Disable all logging.
-//!     - `log-level-error`, `log-level-warn`, `log-level-info`, `log-level-debug`,
-//!       `log-level-trace`: Keep logging only at the specified level or higher.
+//!     - `log-level-error`, `log-level-warn`, `log-level-info`,
+//!       `log-level-debug`, `log-level-trace`: Keep logging only at the
+//!       specified level or higher.
 //!
 //! [ArceOS]: https://github.com/arceos-org/arceos
 

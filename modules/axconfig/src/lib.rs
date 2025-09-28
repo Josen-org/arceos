@@ -1,7 +1,7 @@
 //! Platform-specific constants and parameters for [ArceOS].
 //!
-//! Currently supported platform configs can be found in the [configs] directory of
-//! the [ArceOS] root.
+//! Currently supported platform configs can be found in the [configs] directory
+//! of the [ArceOS] root.
 //!
 //! [ArceOS]: https://github.com/arceos-org/arceos
 //! [configs]: https://github.com/arceos-org/arceos/tree/main/configs

@@ -209,6 +209,5 @@ pub fn init_drivers() -> AllDevices {
             debug!("  input device {}: {:?}", i, dev.device_name());
         }
     }
-
     all_devs
 }

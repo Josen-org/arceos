@@ -6,8 +6,10 @@
 extern crate log;
 extern crate alloc;
 
-use axhal::irq::{IPI_IRQ, IpiTarget};
-use axhal::percpu::this_cpu_id;
+use axhal::{
+    irq::{IPI_IRQ, IpiTarget},
+    percpu::this_cpu_id,
+};
 use kspin::SpinNoIrq;
 use lazyinit::LazyInit;
 
@@ -68,7 +70,8 @@ pub fn run_on_each_cpu<T: Into<MulticastCallback>>(callback: T) {
     );
 }
 
-/// The handler for IPI events. It retrieves the events from the queue and calls the corresponding callbacks.
+/// The handler for IPI events. It retrieves the events from the queue and calls
+/// the corresponding callbacks.
 pub fn ipi_handler() {
     while let Some((src_cpu_id, callback)) = unsafe { IPI_EVENT_QUEUE.current_ref_mut_raw() }
         .lock()

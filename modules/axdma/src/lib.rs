@@ -50,16 +50,17 @@ pub unsafe fn alloc_coherent(layout: Layout) -> AllocResult<DMAInfo> {
 /// Frees coherent memory previously allocated.
 ///
 /// This function releases the memory block that was previously allocated and
-/// marked as coherent. It ensures proper deallocation and management of resources
-/// associated with the memory block.
+/// marked as coherent. It ensures proper deallocation and management of
+/// resources associated with the memory block.
 ///
-/// - `dma_info`: An instance of [`DMAInfo`] containing the details of the memory
-///   block to be freed, such as its starting address and size.
+/// - `dma_info`: An instance of [`DMAInfo`] containing the details of the
+///   memory block to be freed, such as its starting address and size.
 ///
 /// # Safety
 ///
-/// This function is unsafe because it directly interacts with the global allocator,
-/// which can potentially cause memory leaks or other issues if not used correctly.
+/// This function is unsafe because it directly interacts with the global
+/// allocator, which can potentially cause memory leaks or other issues if not
+/// used correctly.
 pub unsafe fn dealloc_coherent(dma: DMAInfo, layout: Layout) {
     unsafe { ALLOCATOR.lock().dealloc_coherent(dma, layout) }
 }
@@ -103,7 +104,7 @@ pub struct DMAInfo {
     /// The address at which the CPU accesses this memory region. This address
     /// is a virtual memory address used by the CPU to access memory.
     pub cpu_addr: NonNull<u8>,
-    /// Represents the physical address of this memory region on the bus. The DMA
-    /// controller uses this address to directly access memory.
+    /// Represents the physical address of this memory region on the bus. The
+    /// DMA controller uses this address to directly access memory.
     pub bus_addr: BusAddr,
 }

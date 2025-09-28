@@ -1,14 +1,15 @@
 //! Dummy implementation of platform-related interfaces defined in [`axplat`].
 
-use axplat::impl_plat_interface;
-
-use axplat::console::ConsoleIf;
-use axplat::init::InitIf;
 #[cfg(feature = "irq")]
 use axplat::irq::{IpiTarget, IrqHandler, IrqIf};
-use axplat::mem::{MemIf, RawRange};
-use axplat::power::PowerIf;
-use axplat::time::TimeIf;
+use axplat::{
+    console::ConsoleIf,
+    impl_plat_interface,
+    init::InitIf,
+    mem::{MemIf, RawRange},
+    power::PowerIf,
+    time::TimeIf,
+};
 
 struct DummyInit;
 struct DummyConsole;

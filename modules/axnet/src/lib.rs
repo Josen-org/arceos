@@ -46,7 +46,7 @@ use crate::{
     device::{EthernetDevice, LoopbackDevice},
     listen_table::ListenTable,
     router::{Router, Rule},
-    service::{Service},
+    service::Service,
     wrapper::SocketSetWrapper,
 };
 

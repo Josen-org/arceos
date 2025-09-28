@@ -51,10 +51,9 @@
 
 extern crate alloc;
 
-use memory_addr::align_up;
+use core::{alloc::Layout, ptr::NonNull};
 
-use core::alloc::Layout;
-use core::ptr::NonNull;
+use memory_addr::align_up;
 
 const TLS_ALIGN: usize = 0x10;
 

@@ -98,11 +98,10 @@ pub mod context {
     pub use axcpu::{TaskContext, TrapFrame};
 }
 
+pub use axcpu::asm;
 /// User mode support.
 #[cfg(feature = "uspace")]
 pub use axcpu::uspace;
-
-pub use axcpu::asm;
 pub use axplat::init::init_later;
 #[cfg(feature = "smp")]
 pub use axplat::init::{init_early_secondary, init_later_secondary};

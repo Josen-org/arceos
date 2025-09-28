@@ -1,6 +1,7 @@
 use alloc::{boxed::Box, sync::Arc};
 
-/// A callback function that will be called when an [`IpiEvent`] is received and handled.
+/// A callback function that will be called when an [`IpiEvent`] is received and
+/// handled.
 pub struct Callback(Box<dyn FnOnce()>);
 
 impl Callback {
@@ -21,7 +22,8 @@ impl<T: FnOnce() + 'static> From<T> for Callback {
     }
 }
 
-/// A [`Callback`] that can be called multiple times. It's used for multicast IPI events.
+/// A [`Callback`] that can be called multiple times. It's used for multicast
+/// IPI events.
 #[derive(Clone)]
 pub struct MulticastCallback(Arc<dyn Fn()>);
 

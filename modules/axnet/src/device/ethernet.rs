@@ -1,6 +1,5 @@
-use core::task::Waker;
-
 use alloc::{string::String, vec};
+use core::task::Waker;
 
 use axdriver::prelude::*;
 use axhal::irq::register_irq_waker;

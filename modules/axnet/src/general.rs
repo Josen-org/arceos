@@ -70,9 +70,7 @@ impl GeneralOptions {
     }
 
     pub fn register_waker(&self, waker: &Waker) {
-        SERVICE
-            .lock()
-            .register_waker(self.device_mask(), waker);
+        SERVICE.lock().register_waker(self.device_mask(), waker);
     }
 
     pub fn send_poller<'a, P: Pollable>(&self, pollable: &'a P) -> Poller<'a, P> {
